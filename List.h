@@ -16,10 +16,10 @@ private:
         Node *prev;
         Node *next;
 
-        Node(const Object &d = Object{}, Node *p = nullptr, Node *n = nullptr)
+        explicit Node(const Object &d = Object{}, Node *p = nullptr, Node *n = nullptr)
                 : data{d}, prev{p}, next{n} {}
 
-        Node(Object &&d, Node *p = nullptr, Node *n = nullptr)
+        explicit Node(Object &&d, Node *p = nullptr, Node *n = nullptr)
                 : data{std::move(d)}, prev{p}, next{n} {}
     };
 
@@ -71,7 +71,7 @@ public:
 
         // Protected constructor for const_iterator.
         // Expects a pointer that represents the current position.
-        const_iterator(Node *p) : current{p} {}
+        explicit const_iterator(Node *p) : current{p} {}
 
         friend class List<Object>;
     };
@@ -84,7 +84,7 @@ public:
         // Must be provided because the private constructor
         // is written; otherwise zero-parameter constructor
         // would be disabled.
-        iterator() {}
+        iterator() = default;
 
         Object &operator*() { return const_iterator::retrieve(); }
 
@@ -119,7 +119,7 @@ public:
     protected:
         // Protected constructor for iterator.
         // Expects the current position.
-        iterator(Node *p) : const_iterator{p} {}
+        explicit iterator(Node *p) : const_iterator{p} {}
 
         friend class List<Object>;
     };
@@ -135,7 +135,7 @@ public:
 
     List(const List &rhs) {
         init();
-        for (auto &x : rhs)
+        for (auto &x: rhs)
             push_back(x);
     }
 
