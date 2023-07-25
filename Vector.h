@@ -23,8 +23,10 @@ public:
     }
 
     Vector &operator=(const Vector &rhs) {
-        Vector copy = rhs;
-        std::swap(*this, copy);
+        if (this != &rhs) {
+            Vector copy = rhs;
+            std::swap(*this, copy);
+        }
         return *this;
     }
 
@@ -33,13 +35,13 @@ public:
     }
 
     Vector(Vector &&rhs)
-            : theSize{rhs.theSize}, theCapacity{rhs.theCapacity}, objects{rhs.objects} {
+    noexcept: theSize{rhs.theSize}, theCapacity{rhs.theCapacity}, objects{rhs.objects} {
         rhs.objects = nullptr;
         rhs.theSize = 0;
         rhs.theCapacity = 0;
     }
 
-    Vector &operator=(Vector &&rhs) {
+    Vector &operator=(Vector &&rhs) noexcept {
         std::swap(theSize, rhs.theSize);
         std::swap(theCapacity, rhs.theCapacity);
         std::swap(objects, rhs.objects);
