@@ -154,20 +154,22 @@ public:
     }
 
     List &operator=(const List &rhs) {
-        List copy = rhs;
-        std::swap(*this, copy);
+        if (this != &rhs) {
+            List copy = rhs;
+            std::swap(*this, copy);
+        }
         return *this;
     }
 
 
     List(List &&rhs)
-            : theSize{rhs.theSize}, head{rhs.head}, tail{rhs.tail} {
+    noexcept: theSize{rhs.theSize}, head{rhs.head}, tail{rhs.tail} {
         rhs.theSize = 0;
         rhs.head = nullptr;
         rhs.tail = nullptr;
     }
 
-    List &operator=(List &&rhs) {
+    List &operator=(List &&rhs) noexcept {
         std::swap(theSize, rhs.theSize);
         std::swap(head, rhs.head);
         std::swap(tail, rhs.tail);
