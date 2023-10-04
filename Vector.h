@@ -15,7 +15,7 @@ public:
     }
 
     Vector(const Vector &rhs)
-            : theSize{rhs.theSize}, theCapacity{rhs.theCapacity}, objects{nullptr} {
+            : theSize{rhs.theSize}, theCapacity{rhs.theCapacity} {
         objects = new Object[theCapacity];
         for (int k = 0; k < theSize; ++k) {
             objects[k] = rhs.objects[k];
