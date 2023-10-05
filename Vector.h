@@ -79,6 +79,13 @@ public:
         return objects[index];
     }
 
+    void resize(int newSize) {
+        if (newSize > theCapacity) {
+            reserve(newSize * 2);
+        }
+        theSize = newSize;
+    }
+
     void reserve(int newCapacity) {
         if (newCapacity < theSize) {
             return;
