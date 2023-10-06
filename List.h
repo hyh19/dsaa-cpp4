@@ -36,23 +36,23 @@ public:
             return retrieve();
         }
 
-        virtual const_iterator &operator++() {
+        const_iterator &operator++() {
             current = current->next;
             return *this;
         }
 
-        virtual const_iterator operator++(int) {
+        const_iterator operator++(int) {
             const_iterator old = *this;
             ++(*this);
             return old;
         }
 
-        virtual const_iterator &operator--() {
+        const_iterator &operator--() {
             current = current->prev;
             return *this;
         }
 
-        virtual const_iterator operator--(int) {
+        const_iterator operator--(int) {
             const_iterator old = *this;
             --(*this);
             return old;
@@ -148,7 +148,7 @@ public:
 
     List(const List &rhs) {
         init();
-        for (auto &x: rhs) {
+        for (const auto &x: rhs) {
             push_back(x);
         }
     }
