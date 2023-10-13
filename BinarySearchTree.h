@@ -38,7 +38,7 @@ public:
     /**
      * Move constructor
      */
-    BinarySearchTree(BinarySearchTree &&rhs) : root{rhs.root} {
+    BinarySearchTree(BinarySearchTree &&rhs) noexcept: root{rhs.root} {
         rhs.root = nullptr;
     }
 
@@ -53,15 +53,17 @@ public:
      * Copy assignment
      */
     BinarySearchTree &operator=(const BinarySearchTree &rhs) {
-        BinarySearchTree copy = rhs;
-        std::swap(*this, copy);
+        if (this != &rhs) {
+            BinarySearchTree copy = rhs;
+            std::swap(*this, copy);
+        }
         return *this;
     }
 
     /**
      * Move assignment
      */
-    BinarySearchTree &operator=(BinarySearchTree &&rhs) {
+    BinarySearchTree &operator=(BinarySearchTree &&rhs) noexcept {
         std::swap(root, rhs.root);
         return *this;
     }
@@ -207,13 +209,15 @@ private:
             remove(x, t->left);
         } else if (t->element < x) {
             remove(x, t->right);
-        } else if (t->left != nullptr && t->right != nullptr) { // Two children
-            t->element = findMin(t->right)->element;
-            remove(t->element, t->right);
         } else {
-            BinaryNode *oldNode = t;
-            t = (t->left != nullptr) ? t->left : t->right;
-            delete oldNode;
+            if (t->left != nullptr && t->right != nullptr) { // Two children
+                t->element = findMin(t->right)->element;
+                remove(t->element, t->right);
+            } else {
+                BinaryNode *oldNode = t;
+                t = (t->left != nullptr ? t->left : t->right);
+                delete oldNode;
+            }
         }
     }
 
@@ -252,13 +256,14 @@ private:
     bool contains(const Comparable &x, BinaryNode *t) const {
         if (t == nullptr) {
             return false;
-        } else if (x < t->element) {
-            return contains(x, t->left);
-        } else if (t->element < x) {
-            return contains(x, t->right);
-        } else {
-            return true;    // Match
         }
+        if (x < t->element) {
+            return contains(x, t->left);
+        }
+        if (t->element < x) {
+            return contains(x, t->right);
+        }
+        return true;
     }
 
 /**************** NON RECURSIVE VERSION ****************
@@ -280,11 +285,12 @@ private:
      * Internal method to make subtree empty.
      */
     void makeEmpty(BinaryNode *&t) {
-        if (t != nullptr) {
-            makeEmpty(t->left);
-            makeEmpty(t->right);
-            delete t;
+        if (t == nullptr) {
+            return;
         }
+        makeEmpty(t->left);
+        makeEmpty(t->right);
+        delete t;
         t = nullptr;
     }
 
@@ -292,11 +298,12 @@ private:
      * Internal method to print a subtree rooted at t in sorted order.
      */
     void printTree(BinaryNode *t, ostream &out) const {
-        if (t != nullptr) {
-            printTree(t->left, out);
-            out << t->element << endl;
-            printTree(t->right, out);
+        if (t == nullptr) {
+            return;
         }
+        printTree(t->left, out);
+        out << t->element << endl;
+        printTree(t->right, out);
     }
 
     /**
@@ -305,9 +312,8 @@ private:
     BinaryNode *clone(BinaryNode *t) const {
         if (t == nullptr) {
             return nullptr;
-        } else {
-            return new BinaryNode{t->element, clone(t->left), clone(t->right)};
         }
+        return new BinaryNode{t->element, clone(t->left), clone(t->right)};
     }
 };
 
